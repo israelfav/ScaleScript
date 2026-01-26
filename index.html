@@ -172,50 +172,69 @@
     </section>
 
     <!-- Contact Form -->
-    <section class="contact" id="contact">
-        <div class="container">
-            <div class="contact-container">
-                <div class="contact-title">
-                    <h2>Get Your 3 Free Viral Samples</h2>
-                    <p><span class="highlight">No commitment needed.</span> Submit your podcast episode or LinkedIn post, and I'll turn it into 3 scroll-stopping shorts. See the quality first, then we discuss the full growth engine.</p>
+<section class="contact" id="contact">
+    <div class="container">
+        <div class="contact-container">
+            <div class="contact-title">
+                <h2>Get Your 3 Free Viral Samples</h2>
+                <p><span class="highlight">No commitment needed.</span> Submit your podcast episode or LinkedIn post, and I'll turn it into 3 scroll-stopping shorts. See the quality first, then we discuss the full growth engine.</p>
+            </div>
+            
+            <form class="contact-form" id="contactForm" method="POST">
+                <!-- Add Formspree email target -->
+                <input type="hidden" name="_subject" value="New ScaleScript Sample Request!">
+                <input type="hidden" name="_replyto" value="" id="replyTo">
+                <input type="hidden" name="_cc" value="israelojeyemi@gmail.com"> <!-- Add your email here -->
+                
+                <div class="form-group">
+                    <input type="text" id="name" name="name" placeholder=" " required>
+                    <label for="name">Your Name *</label>
                 </div>
                 
-                <form class="contact-form" id="contactForm" action="https://formspree.io/f/mwkjpzek" method="POST">
-                    <div class="form-group">
-                        <input type="text" id="name" name="name" placeholder=" " required>
-                        <label for="name">Your Name</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder=" " required>
-                        <label for="email">Email Address</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <select id="niche" name="niche" placeholder=" " required>
-                            <option value="" disabled selected></option>
-                            <option value="founder">Founder/CEO</option>
-                            <option value="podcaster">Podcaster</option>
-                            <option value="other">Other</option>
-                        </select>
-                        <label for="niche">You are a...</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="text" id="content-link" name="content-link" placeholder=" ">
-                        <label for="content-link">Link to your episode/post (optional)</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <textarea id="message" name="message" placeholder=" "></textarea>
-                        <label for="message">What's your biggest content challenge right now?</label>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Send Me 3 Free Samples →</button>
-                </form>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder=" " required>
+                    <label for="email">Email Address *</label>
+                </div>
+                
+                <div class="form-group">
+                    <select id="niche" name="niche" placeholder=" " required>
+                        <option value="" disabled selected>Select your role</option>
+                        <option value="founder">Founder/CEO</option>
+                        <option value="podcaster">Podcaster</option>
+                        <option value="other">Other Business Owner</option>
+                    </select>
+                    <label for="niche">You are a... *</label>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="content-link" name="content-link" placeholder=" ">
+                    <label for="content-link">Link to your episode/post (optional)</label>
+                </div>
+                
+                <div class="form-group">
+                    <textarea id="message" name="message" placeholder=" "></textarea>
+                    <label for="message">What's your biggest content challenge right now?</label>
+                </div>
+                
+                <div class="form-group" style="display: none;">
+                    <input type="text" name="_gotcha" style="display:none">
+                </div>
+                
+                <button type="submit" class="submit-btn">Send Me 3 Free Samples →</button>
+                
+                <p style="text-align: center; margin-top: 15px; font-size: 0.85rem; color: var(--gray);">
+                    I'll respond within 24 hours with your 3 free samples.
+                </p>
+            </form>
+            
+            <div id="successMessage" class="success-message" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <h3>Request Sent Successfully!</h3>
+                <p>I'll create your 3 free viral samples and send them within 24 hours. Check your email for confirmation.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer>
