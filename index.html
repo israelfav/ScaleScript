@@ -345,17 +345,41 @@
 </section>
 
 <!-- Contact Form Section - UPDATED -->
+<!-- Contact Form Section -->
 <section class="contact" id="contact">
     <div class="container">
         <div class="contact-container">
             <div class="contact-title">
                 <h2>Ready to Scale Your Content?</h2>
-                <p><span class="highlight">Schedule a strategy call</span> to discuss how we can transform your content into a lead-generation machine.</p>
+                <p><span class="highlight">Get started in 3 simple steps:</span></p>
+                
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Fill this form</h4>
+                            <p>Tell us about your goals</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>We send a proposal</h4>
+                            <p>Customized plan & next steps</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Start next week</h4>
+                            <p>No calls needed</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <form class="contact-form" id="contactForm" method="POST">
-                <!-- Add Formspree email target -->
-                <input type="hidden" name="_subject" value="New ScaleScript Inquiry!">
+                <input type="hidden" name="_subject" value="New ScaleScript Inquiry - {{name}}">
                 <input type="hidden" name="_replyto" value="" id="replyTo">
                 <input type="hidden" name="selected_plan" id="selectedPlan" value="">
                 
@@ -374,6 +398,7 @@
                         <option value="" disabled selected>Select your role</option>
                         <option value="founder">Founder/CEO</option>
                         <option value="podcaster">Podcaster</option>
+                        <option value="agency">Agency Owner</option>
                         <option value="other">Other Business Owner</option>
                     </select>
                     <label for="niche">You are a... *</label>
@@ -386,36 +411,58 @@
                         <option value="growth">Growth (30 shorts - $1,000)</option>
                         <option value="scale">Scale (45 shorts - $1,400)</option>
                         <option value="custom">Custom Package (60+ shorts)</option>
-                        <option value="not_sure">Not sure - need consultation</option>
+                        <option value="not_sure">Not sure - need proposal</option>
                     </select>
                     <label for="interested_in">Interested in... *</label>
                 </div>
                 
                 <div class="form-group">
-                    <textarea id="message" name="message" placeholder=" "></textarea>
-                    <label for="message">Tell us about your content goals</label>
+                    <textarea id="message" name="message" placeholder=" " rows="4"></textarea>
+                    <label for="message">What are your content goals this quarter?</label>
+                </div>
+                
+                <div class="form-group">
+                    <select id="preferred_contact" name="preferred_contact" placeholder=" ">
+                        <option value="" disabled selected>Preferred contact method</option>
+                        <option value="email">Email (Recommended)</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="telegram">Telegram</option>
+                        <option value="signal">Signal</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <label for="preferred_contact">How should we follow up? (Optional)</label>
                 </div>
                 
                 <div class="form-group" style="display: none;">
                     <input type="text" name="_gotcha" style="display:none">
                 </div>
                 
-                <button type="submit" class="submit-btn">Request Strategy Call →</button>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Send Proposal Request
+                </button>
                 
                 <p style="text-align: center; margin-top: 15px; font-size: 0.85rem; color: var(--gray);">
-                    We'll schedule a 15-minute strategy call within 24 hours.
+                    <i class="fas fa-clock"></i> We respond within 6 hours (business days)
                 </p>
+                
+                <div class="no-call-notice">
+                    <i class="fas fa-comment-slash"></i>
+                    <span>No sales calls. Just clear proposals via email.</span>
+                </div>
             </form>
             
             <div id="successMessage" class="success-message" style="display: none;">
                 <i class="fas fa-check-circle"></i>
                 <h3>Request Received!</h3>
-                <p>We'll be in touch within 24 hours to schedule your strategy call. Check your email for confirmation.</p>
+                <p>We'll email your customized proposal within 6 hours. Check your inbox (and spam folder).</p>
+                <div class="success-email-tip">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Pro Tip:</strong> Reply to our email with any questions - we're faster than scheduling calls.
+                </div>
             </div>
         </div>
     </div>
 </section>
-
 
     <!-- Footer -->
     <footer>
