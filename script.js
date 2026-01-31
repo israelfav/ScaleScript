@@ -632,3 +632,73 @@ if (document.readyState === 'loading') {
 } else {
     initializeAll();
 }
+
+// Plan Selection Functionality
+function initializePlanSelection() {
+    const planButtons = document.querySelectorAll('.plan-cta');
+    const contactForm = document.getElementById('contactForm');
+    const planInput = document.createElement('input');
+    planInput.type = 'hidden';
+    planInput.name = 'selected_plan';
+    planInput.id = 'selectedPlan';
+    
+    if (contactForm && !contactForm.querySelector('#selectedPlan')) {
+        contactForm.appendChild(planInput);
+    }
+    
+    planButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Get plan name from button text
+            const planText = button.textContent.replace('Start with ', '').trim();
+            const planName = planText.toLowerCase();
+            
+            // Set plan in hidden input
+            if (planInput) {
+                planInput.value = planName.charAt(0).toUpperCase() + planName.slice(1);
+            }
+            
+            // Scroll to contact form
+            const contactSection = document.getElementById('contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Focus on name field
+                setTimeout(() => {
+                    const nameField = document.getElementById('name');
+                    if (nameField) {
+                        nameField.focus();
+                    }
+                    
+                    // Add plan to message field
+                    const messageField = document.getElementById('message');
+                    if (messageField && !messageField.value) {
+                        messageField.value = `Interested in the ${planText} plan. `;
+                    }
+                }, 500);
+            }
+        });
+    });
+}
+
+// Initialize plan selection on load
+document.addEventListener('DOMContentLoaded', function() {
+    initializePlanSelection();
+    
+    // Add plan selection to form validation
+    const form = document.getElementById('contactForm');
+    if (form) {
+        const originalSubmit = form.onsubmit;
+        form.onsubmit = function(e) {
+            const planInput = document.getElementById('selectedPlan');
+            if (planInput && !planInput.value) {
+                planInput.value = 'Not Specified';
+            }
+            if (originalSubmit) originalSubmit.call(this, e);
+        };
+    }
+});
