@@ -633,30 +633,42 @@ if (document.readyState === 'loading') {
     initializeAll();
 }
 
-// Plan Selection Functionality
+// Plan Selection Functionality - UPDATED
 function initializePlanSelection() {
-    const planButtons = document.querySelectorAll('.plan-cta');
+    const planButtons = document.querySelectorAll('.plan-cta, .custom-cta');
     const contactForm = document.getElementById('contactForm');
-    const planInput = document.createElement('input');
-    planInput.type = 'hidden';
-    planInput.name = 'selected_plan';
-    planInput.id = 'selectedPlan';
-    
-    if (contactForm && !contactForm.querySelector('#selectedPlan')) {
-        contactForm.appendChild(planInput);
-    }
+    const planSelect = document.getElementById('interested_in');
+    const selectedPlanInput = document.getElementById('selectedPlan');
     
     planButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            e.preventDefault();
+            if (button.tagName === 'A') {
+                e.preventDefault();
+            }
             
-            // Get plan name from button text
-            const planText = button.textContent.replace('Start with ', '').trim();
-            const planName = planText.toLowerCase();
+            // Get plan name from data attribute or text
+            let planName = button.getAttribute('data-plan') || 
+                          button.textContent.replace('Get Started', 'Starter')
+                                            .replace('Choose Growth', 'Growth')
+                                            .replace('Go Big', 'Scale')
+                                            .replace('Request Custom Quote', 'Custom')
+                                            .trim();
             
-            // Set plan in hidden input
-            if (planInput) {
-                planInput.value = planName.charAt(0).toUpperCase() + planName.slice(1);
+            // Set plan in select and hidden input
+            if (planSelect) {
+                const optionValue = planName.toLowerCase();
+                planSelect.value = optionValue;
+                
+                // Update the label to show selected
+                const label = planSelect.parentElement.querySelector('label');
+                if (label) {
+                    label.style.color = 'var(--primary)';
+                    label.style.fontWeight = '600';
+                }
+            }
+            
+            if (selectedPlanInput) {
+                selectedPlanInput.value = planName;
             }
             
             // Scroll to contact form
@@ -667,38 +679,74 @@ function initializePlanSelection() {
                     block: 'center' 
                 });
                 
-                // Focus on name field
+                // Focus on name field after scroll
                 setTimeout(() => {
                     const nameField = document.getElementById('name');
                     if (nameField) {
                         nameField.focus();
                     }
                     
-                    // Add plan to message field
+                    // Update message field with selected plan
                     const messageField = document.getElementById('message');
-                    if (messageField && !messageField.value) {
-                        messageField.value = `Interested in the ${planText} plan. `;
+                    if (messageField) {
+                        const currentMessage = messageField.value.trim();
+                        if (!currentMessage.includes(planName)) {
+                            const planText = planName === 'Custom' ? 
+                                'Custom package (60+ shorts/month)' : 
+                                `${planName} plan`;
+                            messageField.value = currentMessage ? 
+                                `${currentMessage}\n\nInterested in: ${planText}` : 
+                                `Interested in: ${planText}`;
+                        }
                     }
                 }, 500);
             }
         });
     });
+    
+    // Update plan when select changes
+    if (planSelect && selectedPlanInput) {
+        planSelect.addEventListener('change', function() {
+            const selectedText = this.options[this.selectedIndex].text;
+            const planName = selectedText.split('(')[0].trim();
+            selectedPlanInput.value = planName;
+        });
+    }
 }
 
-// Initialize plan selection on load
+// Remove any free samples references from form submission
+// Update the form submission success message
+if (contactForm) {
+    const originalSubmit = contactForm.onsubmit;
+    contactForm.onsubmit = function(e) {
+        // Remove any free samples logic
+        if (originalSubmit) originalSubmit.call(this, e);
+    };
+}
+
+// Update success message text in form submission handler
+// Find the success message update in the existing code and change:
+// From: "I'll create your 3 free viral samples..."
+// To: "We'll schedule a 15-minute strategy call..."
+
+// Initialize everything
 document.addEventListener('DOMContentLoaded', function() {
     initializePlanSelection();
     
-    // Add plan selection to form validation
-    const form = document.getElementById('contactForm');
-    if (form) {
-        const originalSubmit = form.onsubmit;
-        form.onsubmit = function(e) {
-            const planInput = document.getElementById('selectedPlan');
-            if (planInput && !planInput.value) {
-                planInput.value = 'Not Specified';
-            }
-            if (originalSubmit) originalSubmit.call(this, e);
-        };
-    }
+    // Update any text that might still reference free samples
+    const freeSamplesElements = document.querySelectorAll('*');
+    freeSamplesElements.forEach(el => {
+        if (el.textContent && el.textContent.toLowerCase().includes('free sample')) {
+            console.log('Found free samples reference:', el);
+            // You might want to manually review and update these
+        }
+    });
+    
+    // Update navigation
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach(link => {
+        if (link.textContent.includes('Get Samples')) {
+            link.textContent = 'Get Started';
+        }
+    });
 });
