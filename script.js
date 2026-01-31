@@ -634,3 +634,39 @@ if (typeof module !== 'undefined' && module.exports) {
     };
 }
 
+// Add promo video functionality
+const promoVideo = document.querySelector('.promo-video');
+if (promoVideo) {
+    promoVideo.addEventListener('click', () => {
+        const videoId = promoVideo.getAttribute('data-video-id');
+        
+        // Add click animation
+        promoVideo.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            promoVideo.style.transform = 'translateY(-10px)';
+        }, 150);
+        
+        // Load and show YouTube video
+        youtubeVideo.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0`;
+        videoModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+            videoModal.style.opacity = '1';
+        }, 10);
+    });
+}
+
+// Update existing video items with new IDs
+function updateVideoItems() {
+    const videoItems = document.querySelectorAll('.video-item');
+    
+    // You can add specific logic here if needed
+    videoItems.forEach((item, index) => {
+        // Add index-based animations
+        item.style.animationDelay = `${index * 0.1}s`;
+    });
+}
+
+// Call on load
+document.addEventListener('DOMContentLoaded', updateVideoItems);
