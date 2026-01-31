@@ -146,13 +146,13 @@ function validateForm() {
 }
 
 // Form submission handling
+// Updated Form Success Handler
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         // Validate form
         if (!validateForm()) {
-            // Scroll to first error
             const firstError = document.querySelector('.form-group.error');
             if (firstError) {
                 firstError.scrollIntoView({ 
@@ -164,26 +164,35 @@ if (contactForm) {
         }
         
         const submitBtn = contactForm.querySelector('.submit-btn');
-        const originalText = submitBtn.innerHTML;
+        const originalHTML = submitBtn.innerHTML;
         const formData = new FormData(contactForm);
         
-        // Show loading state with animation
+        // Show loading state
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Request...';
         submitBtn.disabled = true;
         
         try {
-            // Send to Formspree
             const response = await fetch(FORMSPREE_ENDPOINT, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             });
             
             if (response.ok) {
-                // Show success message with animation
+                // Update success message based on contact preference
+                const contactMethod = contactForm.querySelector('#preferred_contact').value;
+                let followUpMessage = "We'll email your customized proposal within 6 hours.";
+                
+                if (contactMethod === 'whatsapp') {
+                    followUpMessage = "We'll WhatsApp you the proposal within 6 hours.";
+                } else if (contactMethod === 'telegram') {
+                    followUpMessage = "We'll Telegram you the proposal within 6 hours.";
+                } else if (contactMethod === 'signal') {
+                    followUpMessage = "We'll Signal you the proposal within 6 hours.";
+                }
+                
                 if (successMessage) {
+                    successMessage.querySelector('p').textContent = followUpMessage;
                     successMessage.style.display = 'block';
                     successMessage.style.opacity = '0';
                     successMessage.style.transform = 'translateY(20px)';
@@ -196,13 +205,10 @@ if (contactForm) {
                 setTimeout(() => {
                     contactForm.style.display = 'none';
                     
-                    // Animate success message in
                     setTimeout(() => {
                         if (successMessage) {
                             successMessage.style.opacity = '1';
                             successMessage.style.transform = 'translateY(0)';
-                            
-                            // Scroll to success message
                             successMessage.scrollIntoView({ 
                                 behavior: 'smooth', 
                                 block: 'center' 
@@ -212,9 +218,9 @@ if (contactForm) {
                         // Reset form
                         contactForm.reset();
                         
-                        // Reset button after delay
+                        // Reset button
                         setTimeout(() => {
-                            submitBtn.innerHTML = originalText;
+                            submitBtn.innerHTML = originalHTML;
                             submitBtn.disabled = false;
                         }, 2000);
                         
@@ -222,23 +228,38 @@ if (contactForm) {
                 }, 500);
                 
             } else {
-                // Handle Formspree error
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Form submission failed');
+                throw new Error('Form submission failed');
             }
             
         } catch (error) {
-            // Show error message
-            alert(`Oops! Something went wrong: ${error.message}\n\nPlease try again or email me directly.`);
+            // Fallback: Show Calendly link
+            const fallbackMessage = `Oops! Something went wrong.\n\nPlease email us directly at: hello@scalescript.co\n\nOr book a quick slot:\nhttps://calendly.com/scalescript/15min`;
+            
+            alert(fallbackMessage);
             
             // Reset button
-            submitBtn.innerHTML = originalText;
+            submitBtn.innerHTML = originalHTML;
             submitBtn.disabled = false;
-            
-            console.error('Form submission error:', error);
         }
     });
 }
+
+// Add autofill for preferred contact if they select WhatsApp/Telegram
+const preferredContact = document.getElementById('preferred_contact');
+const messageField = document.getElementById('message');
+
+if (preferredContact && messageField) {
+    preferredContact.addEventListener('change', function() {
+        const method = this.value;
+        const currentMessage = messageField.value.trim();
+        
+        if (method && method !== 'email' && !currentMessage.includes(method)) {
+            const handleQuestion = `\n\nPreferred contact: ${method.charAt(0).toUpperCase() + method.slice(1)}`;
+            messageField.value = currentMessage ? currentMessage + handleQuestion : handleQuestion;
+        }
+    });
+}
+
 
 // Smooth scrolling for anchor links with animation
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
