@@ -945,6 +945,201 @@ footer {
     padding: 20px 20px 0;
 }
 
+
+/* Promo Video Section */
+.promo-video-section {
+    margin-top: 80px;
+    padding-top: 60px;
+    border-top: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.promo-video-container {
+    max-width: 1000px;
+    margin: 40px auto 0;
+}
+
+.promo-video-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+@media (min-width: 992px) {
+    .promo-video-wrapper {
+        flex-direction: row;
+        align-items: center;
+        gap: 50px;
+    }
+}
+
+.promo-video {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: var(--shadow-xl);
+    transition: var(--transition);
+    flex: 1;
+}
+
+.promo-video:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.promo-thumbnail {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .promo-thumbnail {
+        height: 350px;
+    }
+}
+
+.promo-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px 30px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    border: 2px solid white;
+}
+
+.promo-video:hover .promo-play-icon {
+    background: var(--primary);
+    color: white;
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.promo-play-icon i {
+    font-size: 2.5rem;
+}
+
+.promo-info {
+    flex: 1;
+}
+
+.promo-info h3 {
+    font-size: 1.8rem;
+    color: var(--dark);
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+}
+
+.promo-info p {
+    color: var(--gray);
+    line-height: 1.7;
+    margin-bottom: 25px;
+    font-size: 1.05rem;
+}
+
+.promo-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.promo-features span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--dark);
+}
+
+.promo-features i {
+    color: var(--accent);
+    font-size: 0.9rem;
+}
+
+/* Video Grid Layout Update */
+@media (min-width: 768px) {
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .video-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Video Item Hover Enhancement */
+.video-item {
+    position: relative;
+}
+
+.video-item:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.7));
+    border-radius: 12px;
+    opacity: 0;
+    transition: var(--transition);
+    pointer-events: none;
+}
+
+.video-item:hover:after {
+    opacity: 1;
+}
+
+/* Video Info Update */
+.video-info {
+    position: relative;
+    z-index: 2;
+    background: white;
+}
+
+/* Mobile Responsive for Promo */
+@media (max-width: 991px) {
+    .promo-video-wrapper {
+        text-align: center;
+    }
+    
+    .promo-features {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .promo-play-icon {
+        padding: 15px 20px;
+        font-size: 1rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .promo-play-icon i {
+        font-size: 2rem;
+    }
+    
+    .promo-info h3 {
+        font-size: 1.5rem;
+    }
+       }
 /* -----------------------------
    13. Misc / Utilities
    ----------------------------- */
