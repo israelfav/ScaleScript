@@ -676,3 +676,12 @@ function updateVideoItems() {
 
 // Call on load
 document.addEventListener('DOMContentLoaded', updateVideoItems);
+
+// In initScrollAnimations() function, add '.testimonial-card' to the query selector:
+document.querySelectorAll('.section-title, .video-item, .pricing-card, .testimonial-card, .confidence-guarantee').forEach((el, index) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    el.dataset.delay = index * CONFIG.ANIMATION_DELAY_INCREMENT;
+    observer.observe(el);
+});
