@@ -16,10 +16,11 @@
                 <a href="#" class="logo"><i class="fas fa-rocket"></i> ScaleScript</a>
                 
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#portfolio">Results</a></li>
-                    <li><a href="#package">Engine</a></li>
-                    <li><a href="#contact">Get Samples</a></li>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#portfolio">Results</a></li>
+    <li><a href="#package">Packages</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#contact">Get Started</a></li>
                 </ul>
                 
                 <div class="social-icons">
@@ -35,27 +36,27 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <div class="container">
-            <div class="tagline">Growth Engine for US Founders & Podcasters</div>
-            <h1>Your Content Isn't Reaching Enough People. <span>Let's Fix That.</span></h1>
-            <p>Most founders & podcasters have brilliant insights that die in the feed. We turn your content into a viral growth engine that brings investors, clients, and subscribers.</p>
-            
-            <div class="confidence-guarantee">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Our Confidence Guarantee</h3>
-                <p>"I'm so confident that if we don't increase your leads or reach within 30 days, I'll work the second month free until we hit your targets."</p>
-            </div>
-            
-            <a href="#contact" class="cta-button">Get 3 Free Viral Samples →</a>
-            
-            <div class="guarantee-badge">
-                <i class="fas fa-bolt"></i>
-                No Commitment • See Results First
-            </div>
+<section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="container">
+        <div class="tagline">Growth Engine for US Founders & Podcasters</div>
+        <h1>Your Content Isn't Reaching Enough People. <span>Let's Fix That.</span></h1>
+        <p>Most founders & podcasters have brilliant insights that die in the feed. We turn your content into a viral growth engine that brings investors, clients, and subscribers.</p>
+        
+        <div class="confidence-guarantee">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Our Confidence Guarantee</h3>
+            <p>"I'm so confident that if we don't increase your reach within 30 days, we'll work free until we hit your targets."</p>
         </div>
-    </section>
+        
+        <a href="#package" class="cta-button">View Our Packages →</a>
+        
+        <div class="guarantee-badge">
+            <i class="fas fa-bolt"></i>
+            30-Day Performance Guarantee
+        </div>
+    </div>
+</section>
     
     <!-- Portfolio Section -->
     <section class="portfolio" id="portfolio">
@@ -162,7 +163,7 @@
                     <li><i class="fas fa-check-circle"></i> 1 strategy session</li>
                     <li><i class="fas fa-check-circle"></i> 48-hour turnaround</li>
                 </ul>
-                <a href="#contact" class="cta-button plan-cta">Start with Starter</a>
+                <a href="#contact" class="cta-button plan-cta" data-plan="Starter">Get Started</a>
             </div>
             
             <!-- Growth Plan (Featured) -->
@@ -181,7 +182,7 @@
                     <li><i class="fas fa-check-circle"></i> 36-hour turnaround</li>
                     <li><i class="fas fa-check-circle"></i> Hook strategy optimization</li>
                 </ul>
-                <a href="#contact" class="cta-button plan-cta">Start with Growth</a>
+                <a href="#contact" class="cta-button plan-cta" data-plan="Growth">Choose Growth</a>
             </div>
             
             <!-- Scale Plan -->
@@ -200,16 +201,37 @@
                     <li><i class="fas fa-check-circle"></i> A/B testing included</li>
                     <li><i class="fas fa-check-circle"></i> Competitor analysis</li>
                 </ul>
-                <a href="#contact" class="cta-button plan-cta">Start with Scale</a>
+                <a href="#contact" class="cta-button plan-cta" data-plan="Scale">Go Big</a>
+            </div>
+        </div>
+        
+        <!-- Custom Package Offer -->
+        <div class="custom-package">
+            <div class="custom-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="custom-content">
+                <h3>Need More? We Do Custom Packages</h3>
+                <p>For businesses needing 60+ shorts per month, dedicated teams, or specialized content strategies. Enterprise-level results require enterprise-level solutions.</p>
+                <div class="custom-features">
+                    <span><i class="fas fa-check"></i> 60+ shorts/month</span>
+                    <span><i class="fas fa-check"></i> Dedicated editor</span>
+                    <span><i class="fas fa-check"></i> Priority support</span>
+                    <span><i class="fas fa-check"></i> Custom reporting</span>
+                </div>
+                <a href="#contact" class="custom-cta" data-plan="Custom">
+                    <i class="fas fa-arrow-right"></i> Request Custom Quote
+                </a>
             </div>
         </div>
         
         <div class="plan-note">
-            <i class="fas fa-info-circle"></i>
-            <p>All plans include our Confidence Guarantee: If we don't increase your reach within 30 days, we'll work free until we hit your targets.</p>
+            <i class="fas fa-shield-alt"></i>
+            <p><strong>Confidence Guarantee:</strong> If we don't increase your reach within 30 days, we'll work free until we hit your targets.</p>
         </div>
     </div>
 </section>
+    
 
 <!-- Testimonials Section -->
 <section class="testimonials" id="testimonials">
@@ -322,20 +344,20 @@
     </div>
 </section>
 
-    <!-- Contact Form -->
+<!-- Contact Form Section - UPDATED -->
 <section class="contact" id="contact">
     <div class="container">
         <div class="contact-container">
             <div class="contact-title">
-                <h2>Get Your 3 Free Viral Samples</h2>
-                <p><span class="highlight">No commitment needed.</span> Submit your podcast episode, and I'll turn it into 3 scroll-stopping shorts. See the quality first, then we discuss the full growth engine.</p>
+                <h2>Ready to Scale Your Content?</h2>
+                <p><span class="highlight">Schedule a strategy call</span> to discuss how we can transform your content into a lead-generation machine.</p>
             </div>
             
             <form class="contact-form" id="contactForm" method="POST">
                 <!-- Add Formspree email target -->
-                <input type="hidden" name="_subject" value="New ScaleScript Sample Request!">
+                <input type="hidden" name="_subject" value="New ScaleScript Inquiry!">
                 <input type="hidden" name="_replyto" value="" id="replyTo">
-                <input type="hidden" name="_cc" value="israelojeyemi@gmail.com"> <!-- Add your email here -->
+                <input type="hidden" name="selected_plan" id="selectedPlan" value="">
                 
                 <div class="form-group">
                     <input type="text" id="name" name="name" placeholder=" " required>
@@ -358,34 +380,42 @@
                 </div>
                 
                 <div class="form-group">
-                    <input type="text" id="content-link" name="content-link" placeholder=" ">
-                    <label for="content-link">Link to your episode/post (optional)</label>
+                    <select id="interested_in" name="interested_in" placeholder=" " required>
+                        <option value="" disabled selected>Select package interest</option>
+                        <option value="starter">Starter (20 shorts - $700)</option>
+                        <option value="growth">Growth (30 shorts - $1,000)</option>
+                        <option value="scale">Scale (45 shorts - $1,400)</option>
+                        <option value="custom">Custom Package (60+ shorts)</option>
+                        <option value="not_sure">Not sure - need consultation</option>
+                    </select>
+                    <label for="interested_in">Interested in... *</label>
                 </div>
                 
                 <div class="form-group">
                     <textarea id="message" name="message" placeholder=" "></textarea>
-                    <label for="message">What's your biggest content challenge right now?</label>
+                    <label for="message">Tell us about your content goals</label>
                 </div>
                 
                 <div class="form-group" style="display: none;">
                     <input type="text" name="_gotcha" style="display:none">
                 </div>
                 
-                <button type="submit" class="submit-btn">Send Me 3 Free Samples →</button>
+                <button type="submit" class="submit-btn">Request Strategy Call →</button>
                 
                 <p style="text-align: center; margin-top: 15px; font-size: 0.85rem; color: var(--gray);">
-                    I'll respond within 24 hours with your 3 free samples.
+                    We'll schedule a 15-minute strategy call within 24 hours.
                 </p>
             </form>
             
             <div id="successMessage" class="success-message" style="display: none;">
                 <i class="fas fa-check-circle"></i>
-                <h3>Request Sent Successfully!</h3>
-                <p>I'll create your 3 free viral samples and send them within 24 hours. Check your email for confirmation.</p>
+                <h3>Request Received!</h3>
+                <p>We'll be in touch within 24 hours to schedule your strategy call. Check your email for confirmation.</p>
             </div>
         </div>
     </div>
 </section>
+
 
     <!-- Footer -->
     <footer>
