@@ -585,37 +585,43 @@ function initialize() {
     initGuaranteeBadge();
     initTouchDeviceSupport();
     
-    // Initial animations
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.classList.add('loaded');
-        
-        // Animate logo
-        const logo = document.querySelector('.logo');
-        if (logo) {
-            setTimeout(() => {
-                logo.style.transform = 'rotate(-5deg)';
-                setTimeout(() => {
-                    logo.style.transform = 'rotate(0)';
-                }, 300);
-            }, 500);
-        }
-        
-        // Animate hero elements
-        const heroElements = document.querySelectorAll('.hero .tagline, .hero h1, .hero p, .confidence-guarantee, .cta-button, .guarantee-badge');
-        heroElements.forEach((el, index) => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            
-            setTimeout(() => {
-                el.style.opacity = '1';
-                el.style.transform = 'translateY(0)';
-            }, 300 + (index * 200));
-        });
-    });
+    // Initial animations - check if DOM is already loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runInitialAnimations);
+    } else {
+        runInitialAnimations();
+    }
     
     console.log('ScaleScript Initialized Successfully');
 }
+
+function runInitialAnimations() {
+    document.body.classList.add('loaded');
+    
+    // Animate logo
+    const logo = document.querySelector('.logo');
+    if (logo) {
+        setTimeout(() => {
+            logo.style.transform = 'rotate(-5deg)';
+            setTimeout(() => {
+                logo.style.transform = 'rotate(0)';
+            }, 300);
+        }, 500);
+    }
+    
+    // Animate hero elements
+    const heroElements = document.querySelectorAll('.hero .tagline, .hero h1, .hero p, .confidence-guarantee, .cta-button, .guarantee-badge');
+    heroElements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, 300 + (index * 200));
+    });
+                                        }
 
 // Start initialization
 if (document.readyState === 'loading') {
@@ -647,8 +653,8 @@ if (promoVideo) {
         }, 150);
         
         // Load and show YouTube video
-        youtubeVideo.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0`;
-        videoModal.classList.add('active');
+        elements.youtubeVideo.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0`;
+elements.videoModal.classList.add('active');
         document.body.style.overflow = 'hidden';
         
         setTimeout(() => {
