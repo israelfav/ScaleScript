@@ -1,3 +1,24 @@
+
+// Update validateForm to include preferred contact
+function validateForm() {
+    // ... existing validation code ...
+    
+    // Remove any required validation for preferred_contact (it's optional)
+    const preferredContact = document.getElementById('preferred_contact');
+    if (preferredContact) {
+        preferredContact.parentElement.classList.remove('error');
+    }
+    
+    return isValid;
+}
+
+// Add tooltip for "No sales calls" message
+const noCallNotice = document.querySelector('.no-call-notice');
+if (noCallNotice) {
+    noCallNotice.title = "We respect your time. Everything can be handled via email/messaging.";
+    noCallNotice.style.cursor = 'help';
+}
+
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navLinks = document.getElementById('navLinks');
