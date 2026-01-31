@@ -1,686 +1,348 @@
+// script.js - Optimized Version
+'use strict';
 
-// Update validateForm to include preferred contact
-function validateForm() {
-    // ... existing validation code ...
+// Configuration
+const CONFIG = {
+    FORMSPREE_ENDPOINT: "https://formspree.io/f/mwkjpzek",
+    HEADER_SCROLL_THRESHOLD: 50,
+    ANIMATION_DELAY_INCREMENT: 100,
+    MOBILE_BREAKPOINT: 768,
+    BACK_TO_TOP_THRESHOLD: 500
+};
+
+// DOM Elements
+const elements = {
+    mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+    navLinks: document.getElementById('navLinks'),
+    header: document.getElementById('header'),
+    contactForm: document.getElementById('contactForm'),
+    successMessage: document.getElementById('successMessage'),
+    videoModal: document.getElementById('videoModal'),
+    closeModal: document.getElementById('closeModal'),
+    youtubeVideo: document.getElementById('youtubeVideo'),
+    videoItems: document.querySelectorAll('.video-item'),
+    backToTop: null // Will be created dynamically
+};
+
+// State
+const state = {
+    isMobileMenuOpen: false,
+    activeVideoId: null,
+    isFormSubmitting: false
+};
+
+// Mobile Menu
+function initMobileMenu() {
+    if (!elements.mobileMenuBtn || !elements.navLinks) return;
     
-    // Remove any required validation for preferred_contact (it's optional)
-    const preferredContact = document.getElementById('preferred_contact');
-    if (preferredContact) {
-        preferredContact.parentElement.classList.remove('error');
-    }
+    elements.mobileMenuBtn.addEventListener('click', toggleMobileMenu);
     
-    return isValid;
+    // Close mobile menu when clicking links
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+    
+    // Update position on resize
+    window.addEventListener('resize', updateMobileMenuPosition);
+    updateMobileMenuPosition();
 }
 
-// Add tooltip for "No sales calls" message
-const noCallNotice = document.querySelector('.no-call-notice');
-if (noCallNotice) {
-    noCallNotice.title = "We respect your time. Everything can be handled via email/messaging.";
-    noCallNotice.style.cursor = 'help';
+function toggleMobileMenu() {
+    state.isMobileMenuOpen = !state.isMobileMenuOpen;
+    elements.navLinks.classList.toggle('active', state.isMobileMenuOpen);
+    
+    const icon = state.isMobileMenuOpen ? 'times' : 'bars';
+    elements.mobileMenuBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
 }
 
-// Mobile menu toggle
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const navLinks = document.getElementById('navLinks');
+function closeMobileMenu() {
+    state.isMobileMenuOpen = false;
+    elements.navLinks.classList.remove('active');
+    elements.mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+}
 
-mobileMenuBtn.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-    mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
-        ? '<i class="fas fa-times"></i>' 
-        : '<i class="fas fa-bars"></i>';
-});
-
-// Close mobile menu when clicking a link
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-    });
-});
-
-// Header scroll effect
-const header = document.getElementById('header');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
+function updateMobileMenuPosition() {
+    if (window.innerWidth <= CONFIG.MOBILE_BREAKPOINT && elements.header && elements.navLinks) {
+        const headerHeight = elements.header.offsetHeight;
+        elements.navLinks.style.top = `${headerHeight}px`;
     }
-});
+}
 
-// Video modal functionality
-const videoItems = document.querySelectorAll('.video-item');
-const videoModal = document.getElementById('videoModal');
-const closeModal = document.getElementById('closeModal');
-const youtubeVideo = document.getElementById('youtubeVideo');
-
-// Enhanced video click with animation
-videoItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const videoId = item.getAttribute('data-video-id');
-        
-        // Add click animation to video item
-        item.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            item.style.transform = 'translateY(-10px)';
-        }, 150);
-        
-        // Load and show YouTube video
-        youtubeVideo.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-        videoModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        
-        // Add fade-in animation to modal
-        setTimeout(() => {
-            videoModal.style.opacity = '1';
-        }, 10);
+// Header Scroll Effect
+function initHeaderScroll() {
+    if (!elements.header) return;
+    
+    window.addEventListener('scroll', () => {
+        const shouldAddClass = window.scrollY > CONFIG.HEADER_SCROLL_THRESHOLD;
+        elements.header.classList.toggle('scrolled', shouldAddClass);
     });
-});
+}
 
-// Close modal with animation
-function closeVideoModal() {
-    videoModal.style.opacity = '0';
+// Video Modal
+function initVideoModal() {
+    if (!elements.videoItems.length || !elements.videoModal || !elements.youtubeVideo) return;
+    
+    elements.videoItems.forEach(item => {
+        item.addEventListener('click', () => openVideoModal(item));
+    });
+    
+    if (elements.closeModal) {
+        elements.closeModal.addEventListener('click', closeVideoModal);
+    }
+    
+    elements.videoModal.addEventListener('click', (e) => {
+        if (e.target === elements.videoModal) {
+            closeVideoModal();
+        }
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && elements.videoModal.classList.contains('active')) {
+            closeVideoModal();
+        }
+    });
+}
+
+function openVideoModal(videoItem) {
+    const videoId = videoItem.getAttribute('data-video-id');
+    if (!videoId) return;
+    
+    // Click animation
+    videoItem.style.transform = 'scale(0.95)';
     setTimeout(() => {
-        videoModal.classList.remove('active');
-        youtubeVideo.src = '';
+        videoItem.style.transform = 'translateY(-10px)';
+    }, 150);
+    
+    // Load video
+    elements.youtubeVideo.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+    state.activeVideoId = videoId;
+    
+    // Show modal
+    elements.videoModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        elements.videoModal.style.opacity = '1';
+    }, 10);
+}
+
+function closeVideoModal() {
+    elements.videoModal.style.opacity = '0';
+    
+    setTimeout(() => {
+        elements.videoModal.classList.remove('active');
+        if (elements.youtubeVideo) {
+            elements.youtubeVideo.src = '';
+        }
         document.body.style.overflow = 'auto';
+        state.activeVideoId = null;
     }, 300);
 }
 
-closeModal.addEventListener('click', closeVideoModal);
-
-// Close modal when clicking outside
-videoModal.addEventListener('click', (e) => {
-    if (e.target === videoModal) {
-        closeVideoModal();
-    }
-});
-
-// Close modal with Escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && videoModal.classList.contains('active')) {
-        closeVideoModal();
-    }
-});
-
-// Formspree Configuration
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/mwkjpzek"; // Your Formspree endpoint
-
-// Form elements
-const contactForm = document.getElementById('contactForm');
-const successMessage = document.getElementById('successMessage');
-
-// Set form action dynamically
-if (contactForm) {
-    contactForm.action = FORMSPREE_ENDPOINT;
+// Form Handling
+function initContactForm() {
+    if (!elements.contactForm) return;
     
-    // Update reply-to field when email changes
+    // Set form action
+    elements.contactForm.action = CONFIG.FORMSPREE_ENDPOINT;
+    
+    // Initialize reply-to field
     const emailInput = document.getElementById('email');
     const replyToField = document.getElementById('replyTo');
     
     if (emailInput && replyToField) {
-        emailInput.addEventListener('input', function() {
-            replyToField.value = this.value;
+        emailInput.addEventListener('input', () => {
+            replyToField.value = emailInput.value;
         });
     }
+    
+    // Form submission
+    elements.contactForm.addEventListener('submit', handleFormSubmit);
+    
+    // Form validation
+    initFormValidation();
+    
+    // Plan selection
+    initPlanSelection();
 }
 
-// Form validation before submission
 function validateForm() {
-    const name = document.getElementById('name');
-    const email = document.getElementById('email');
-    const niche = document.getElementById('niche');
+    const requiredFields = ['name', 'email', 'niche'];
+    let isValid = true;
     
-    if (!name || !email || !niche) return false;
-    
-    const nameValue = name.value.trim();
-    const emailValue = email.value.trim();
-    const nicheValue = niche.value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    // Reset error states
+    // Reset errors
     document.querySelectorAll('.form-group').forEach(group => {
         group.classList.remove('error');
     });
     
-    let isValid = true;
-    
-    if (!nameValue) {
-        name.parentElement.classList.add('error');
-        isValid = false;
-    }
-    
-    if (!emailValue) {
-        email.parentElement.classList.add('error');
-        isValid = false;
-    } else if (!emailRegex.test(emailValue)) {
-        email.parentElement.classList.add('error');
-        isValid = false;
-    }
-    
-    if (!nicheValue) {
-        niche.parentElement.classList.add('error');
-        isValid = false;
-    }
+    // Validate required fields
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        
+        const value = field.value.trim();
+        
+        if (!value) {
+            field.parentElement.classList.add('error');
+            isValid = false;
+            return;
+        }
+        
+        // Email validation
+        if (fieldId === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                field.parentElement.classList.add('error');
+                isValid = false;
+            }
+        }
+    });
     
     return isValid;
 }
 
-// Form submission handling
-// Updated Form Success Handler
-if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    if (state.isFormSubmitting) return;
+    
+    // Validate
+    if (!validateForm()) {
+        const firstError = document.querySelector('.form-group.error');
+        if (firstError) {
+            firstError.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+        return;
+    }
+    
+    state.isFormSubmitting = true;
+    const submitBtn = elements.contactForm.querySelector('.submit-btn');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    // Show loading
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Request...';
+    submitBtn.disabled = true;
+    
+    try {
+        const formData = new FormData(elements.contactForm);
+        const response = await fetch(CONFIG.FORMSPREE_ENDPOINT, {
+            method: 'POST',
+            body: formData,
+            headers: { 
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
         
-        // Validate form
-        if (!validateForm()) {
-            const firstError = document.querySelector('.form-group.error');
-            if (firstError) {
-                firstError.scrollIntoView({ 
+        if (response.ok) {
+            showSuccessMessage();
+            elements.contactForm.reset();
+        } else {
+            throw new Error('Form submission failed');
+        }
+    } catch (error) {
+        console.error('Form submission error:', error);
+        showErrorFallback();
+    } finally {
+        // Reset button
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        state.isFormSubmitting = false;
+    }
+}
+
+function showSuccessMessage() {
+    if (!elements.successMessage) return;
+    
+    // Get contact preference
+    const contactMethod = document.getElementById('preferred_contact')?.value || 'email';
+    let message = "We'll email your customized proposal within 6 hours.";
+    
+    switch(contactMethod) {
+        case 'whatsapp':
+            message = "We'll WhatsApp you the proposal within 6 hours.";
+            break;
+        case 'telegram':
+            message = "We'll Telegram you the proposal within 6 hours.";
+            break;
+        case 'signal':
+            message = "We'll Signal you the proposal within 6 hours.";
+            break;
+    }
+    
+    // Update and show success message
+    elements.successMessage.querySelector('p').textContent = message;
+    
+    // Hide form
+    elements.contactForm.style.opacity = '0.5';
+    elements.contactForm.style.transform = 'translateY(-20px)';
+    
+    setTimeout(() => {
+        elements.contactForm.style.display = 'none';
+        
+        setTimeout(() => {
+            elements.successMessage.style.display = 'block';
+            elements.successMessage.style.opacity = '0';
+            elements.successMessage.style.transform = 'translateY(20px)';
+            
+            requestAnimationFrame(() => {
+                elements.successMessage.style.opacity = '1';
+                elements.successMessage.style.transform = 'translateY(0)';
+                elements.successMessage.scrollIntoView({ 
                     behavior: 'smooth', 
                     block: 'center' 
                 });
-            }
-            return;
-        }
-        
-        const submitBtn = contactForm.querySelector('.submit-btn');
-        const originalHTML = submitBtn.innerHTML;
-        const formData = new FormData(contactForm);
-        
-        // Show loading state
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Request...';
-        submitBtn.disabled = true;
-        
-        try {
-            const response = await fetch(FORMSPREE_ENDPOINT, {
-                method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
             });
+        }, 300);
+    }, 500);
+}
+
+function showErrorFallback() {
+    const fallbackMessage = `Oops! Something went wrong.\n\nPlease email us directly at: hello@scalescript.co\n\nOr book a quick slot:\nhttps://calendly.com/scalescript/15min`;
+    alert(fallbackMessage);
+}
+
+function initFormValidation() {
+    const emailInput = document.getElementById('email');
+    
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const email = this.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
-            if (response.ok) {
-                // Update success message based on contact preference
-                const contactMethod = contactForm.querySelector('#preferred_contact').value;
-                let followUpMessage = "We'll email your customized proposal within 6 hours.";
-                
-                if (contactMethod === 'whatsapp') {
-                    followUpMessage = "We'll WhatsApp you the proposal within 6 hours.";
-                } else if (contactMethod === 'telegram') {
-                    followUpMessage = "We'll Telegram you the proposal within 6 hours.";
-                } else if (contactMethod === 'signal') {
-                    followUpMessage = "We'll Signal you the proposal within 6 hours.";
-                }
-                
-                if (successMessage) {
-                    successMessage.querySelector('p').textContent = followUpMessage;
-                    successMessage.style.display = 'block';
-                    successMessage.style.opacity = '0';
-                    successMessage.style.transform = 'translateY(20px)';
-                }
-                
-                // Hide form with animation
-                contactForm.style.opacity = '0.5';
-                contactForm.style.transform = 'translateY(-20px)';
-                
-                setTimeout(() => {
-                    contactForm.style.display = 'none';
-                    
-                    setTimeout(() => {
-                        if (successMessage) {
-                            successMessage.style.opacity = '1';
-                            successMessage.style.transform = 'translateY(0)';
-                            successMessage.scrollIntoView({ 
-                                behavior: 'smooth', 
-                                block: 'center' 
-                            });
-                        }
-                        
-                        // Reset form
-                        contactForm.reset();
-                        
-                        // Reset button
-                        setTimeout(() => {
-                            submitBtn.innerHTML = originalHTML;
-                            submitBtn.disabled = false;
-                        }, 2000);
-                        
-                    }, 300);
-                }, 500);
-                
+            if (email && !emailRegex.test(email)) {
+                this.parentElement.classList.add('error');
             } else {
-                throw new Error('Form submission failed');
-            }
-            
-        } catch (error) {
-            // Fallback: Show Calendly link
-            const fallbackMessage = `Oops! Something went wrong.\n\nPlease email us directly at: hello@scalescript.co\n\nOr book a quick slot:\nhttps://calendly.com/scalescript/15min`;
-            
-            alert(fallbackMessage);
-            
-            // Reset button
-            submitBtn.innerHTML = originalHTML;
-            submitBtn.disabled = false;
-        }
-    });
-}
-
-// Add autofill for preferred contact if they select WhatsApp/Telegram
-const preferredContact = document.getElementById('preferred_contact');
-const messageField = document.getElementById('message');
-
-if (preferredContact && messageField) {
-    preferredContact.addEventListener('change', function() {
-        const method = this.value;
-        const currentMessage = messageField.value.trim();
-        
-        if (method && method !== 'email' && !currentMessage.includes(method)) {
-            const handleQuestion = `\n\nPreferred contact: ${method.charAt(0).toUpperCase() + method.slice(1)}`;
-            messageField.value = currentMessage ? currentMessage + handleQuestion : handleQuestion;
-        }
-    });
-}
-
-
-// Smooth scrolling for anchor links with animation
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-            // Add bounce animation to clicked link
-            this.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 200);
-            
-            // Smooth scroll to target
-            window.scrollTo({
-                top: targetElement.offsetTop - 80,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// Fix mobile menu position
-function updateMobileMenuPosition() {
-    if (window.innerWidth <= 768) {
-        const headerHeight = header.offsetHeight;
-        navLinks.style.top = headerHeight + 'px';
-    }
-}
-
-window.addEventListener('load', updateMobileMenuPosition);
-window.addEventListener('resize', updateMobileMenuPosition);
-
-// Intersection Observer for scroll animations
-const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            // Add staggered animation
-            setTimeout(() => {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                entry.target.classList.add('animated');
-            }, entry.target.dataset.delay || 0);
-        }
-    });
-}, observerOptions);
-
-// Observe elements for scroll animations with staggered delays
-document.querySelectorAll('.section-title, .video-item, .package-card, .confidence-guarantee').forEach((el, index) => {
-    el.dataset.delay = index * 100; // Stagger animation
-    observer.observe(el);
-});
-
-// Parallax effect for hero background
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const heroBg = document.querySelector('.hero-bg');
-    if (heroBg) {
-        heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
-    }
-});
-
-// Animate guarantee badge continuously
-const guaranteeBadge = document.querySelector('.guarantee-badge');
-if (guaranteeBadge) {
-    setInterval(() => {
-        guaranteeBadge.style.transform = 'scale(1.05)';
-        setTimeout(() => {
-            guaranteeBadge.style.transform = 'scale(1)';
-        }, 500);
-    }, 3000);
-}
-
-// Feature list item hover animations
-const featureItems = document.querySelectorAll('.features-list li');
-featureItems.forEach(item => {
-    item.addEventListener('mouseenter', () => {
-        item.style.transform = 'translateX(10px)';
-        item.style.transition = 'transform 0.3s ease';
-    });
-    
-    item.addEventListener('mouseleave', () => {
-        item.style.transform = 'translateX(0)';
-    });
-});
-
-// Form input focus animations
-const formInputs = document.querySelectorAll('.form-group input, .form-group textarea, .form-group select');
-formInputs.forEach(input => {
-    input.addEventListener('focus', function() {
-        this.parentElement.classList.add('focused');
-    });
-    
-    input.addEventListener('blur', function() {
-        if (!this.value) {
-            this.parentElement.classList.remove('focused');
-        }
-    });
-});
-
-// Email input validation
-const emailInput = document.getElementById('email');
-if (emailInput) {
-    emailInput.addEventListener('blur', function() {
-        const email = this.value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (email && !emailRegex.test(email)) {
-            this.style.borderColor = '#EF4444';
-            this.parentElement.classList.add('error');
-        } else {
-            this.style.borderColor = '';
-            this.parentElement.classList.remove('error');
-        }
-    });
-}
-
-// Initialize animations on load
-document.addEventListener('DOMContentLoaded', () => {
-    // Add loaded class for initial animations
-    document.body.classList.add('loaded');
-    
-    // Animate logo on load
-    const logo = document.querySelector('.logo');
-    if (logo) {
-        setTimeout(() => {
-            logo.style.transform = 'rotate(-5deg)';
-            setTimeout(() => {
-                logo.style.transform = 'rotate(0)';
-            }, 300);
-        }, 500);
-    }
-    
-    // Set current year in footer
-    const yearElement = document.getElementById('currentYear');
-    if (yearElement) {
-        yearElement.textContent = new Date().getFullYear();
-    }
-});
-
-// Social icon hover effects
-const socialIcons = document.querySelectorAll('.social-icons a, .footer-social a');
-socialIcons.forEach(icon => {
-    icon.addEventListener('mouseenter', () => {
-        icon.style.transform = 'translateY(-5px) rotate(5deg)';
-    });
-    
-    icon.addEventListener('mouseleave', () => {
-        icon.style.transform = 'translateY(0) rotate(0)';
-    });
-});
-
-// Video item hover enhancements
-videoItems.forEach(item => {
-    const playIcon = item.querySelector('.play-icon');
-    
-    item.addEventListener('mouseenter', () => {
-        if (playIcon) {
-            playIcon.style.transform = 'translate(-50%, -50%) scale(1.2)';
-            playIcon.style.backgroundColor = 'var(--primary)';
-            playIcon.style.color = 'white';
-        }
-    });
-    
-    item.addEventListener('mouseleave', () => {
-        if (playIcon) {
-            playIcon.style.transform = 'translate(-50%, -50%) scale(1)';
-            playIcon.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-            playIcon.style.color = 'var(--primary)';
-        }
-    });
-});
-
-// Page load animations
-window.addEventListener('load', () => {
-    // Animate hero elements sequentially
-    const heroElements = document.querySelectorAll('.hero .tagline, .hero h1, .hero p, .confidence-guarantee, .cta-button, .guarantee-badge');
-    heroElements.forEach((el, index) => {
-        setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, 300 + (index * 200));
-    });
-});
-
-// Form field auto-focus for better UX
-const nameInput = document.getElementById('name');
-if (nameInput) {
-    nameInput.focus();
-}
-
-// Add keyboard navigation for form
-if (contactForm) {
-    contactForm.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && e.target.type !== 'textarea') {
-            e.preventDefault();
-            const formElements = Array.from(this.elements);
-            const currentIndex = formElements.indexOf(e.target);
-            const nextElement = formElements[currentIndex + 1];
-            
-            if (nextElement) {
-                nextElement.focus();
-            }
-        }
-    });
-}
-
-// Initialize tooltips for form fields
-const formGroups = document.querySelectorAll('.form-group');
-formGroups.forEach(group => {
-    const input = group.querySelector('input, textarea, select');
-    const label = group.querySelector('label');
-    
-    if (input && label) {
-        input.addEventListener('focus', () => {
-            label.style.color = 'var(--primary)';
-            label.style.fontWeight = '600';
-        });
-        
-        input.addEventListener('blur', () => {
-            if (!input.value) {
-                label.style.color = 'var(--gray)';
-                label.style.fontWeight = '400';
+                this.parentElement.classList.remove('error');
             }
         });
     }
-});
-
-// Debounce function for resize events
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        updateMobileMenuPosition();
-    }, 250);
-});
-
-// Touch device detection
-const isTouchDevice = () => {
-    return (('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0) ||
-        (navigator.msMaxTouchPoints > 0));
-};
-
-// Adjust animations for touch devices
-if (isTouchDevice()) {
-    document.body.classList.add('touch-device');
     
-    // Remove hover effects on touch devices
-    const hoverElements = document.querySelectorAll('.video-item, .service-card, .social-icons a');
-    hoverElements.forEach(el => {
-        el.classList.add('no-hover');
-    });
-}
-
-// Add loading state for images
-document.querySelectorAll('img').forEach(img => {
-    img.addEventListener('load', function() {
-        this.style.opacity = '1';
-        this.style.transition = 'opacity 0.3s ease';
-    });
-    
-    // Set initial opacity for smooth loading
-    img.style.opacity = '0';
-});
-
-// Back to top button functionality
-const backToTop = document.createElement('button');
-backToTop.innerHTML = '<i class="fas fa-chevron-up"></i>';
-backToTop.className = 'back-to-top';
-backToTop.style.cssText = `
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.3s ease;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-lg);
-`;
-
-document.body.appendChild(backToTop);
-
-backToTop.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-});
-
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) {
-        backToTop.style.opacity = '1';
-        backToTop.style.transform = 'translateY(0)';
-    } else {
-        backToTop.style.opacity = '0';
-        backToTop.style.transform = 'translateY(20px)';
-    }
-});
-
-// Add keyboard shortcut for contact form (Ctrl/Cmd + Enter)
-document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        const focusedElement = document.activeElement;
-        if (focusedElement && focusedElement.form && focusedElement.form.id === 'contactForm') {
-            const submitBtn = focusedElement.form.querySelector('.submit-btn');
-            if (submitBtn) {
-                submitBtn.click();
+    // Form input focus animations
+    const formInputs = document.querySelectorAll('.form-group input, .form-group textarea, .form-group select');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.parentElement.classList.remove('focused');
             }
-        }
-    }
-});
-
-// Initialize service worker for offline support (optional)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(error => {
-            console.log('ServiceWorker registration failed:', error);
         });
     });
 }
 
-// Analytics tracking for form submissions
-function trackFormSubmission(type) {
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'generate_lead', {
-            'event_category': 'form_submission',
-            'event_label': type
-        });
-    }
-    
-    // Log to console for debugging
-    console.log(`Form submitted: ${type}`);
-}
-
-// Update form submission to track
-if (contactForm) {
-    const originalSubmit = contactForm.onsubmit;
-    contactForm.onsubmit = function(e) {
-        const niche = document.getElementById('niche')?.value || 'unknown';
-        trackFormSubmission(niche);
-        if (originalSubmit) originalSubmit.call(this, e);
-    };
-}
-
-// Initialize all interactive elements
-function initializeAll() {
-    console.log('ScaleScript Portfolio Initialized');
-    
-    // Check Formspree endpoint
-    console.log('Formspree Endpoint:', FORMSPREE_ENDPOINT);
-    
-    // Verify form elements exist
-    if (!contactForm) {
-        console.warn('Contact form not found!');
-    }
-    
-    if (!successMessage) {
-        console.warn('Success message element not found!');
-    }
-    
-    // Add form ID to console for debugging
-    const formId = FORMSPREE_ENDPOINT.split('/').pop();
-    console.log('Using Formspree Form ID:', formId);
-}
-
-// Call initialization when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeAll);
-} else {
-    initializeAll();
-}
-
-// Plan Selection Functionality - UPDATED
-function initializePlanSelection() {
+// Plan Selection
+function initPlanSelection() {
     const planButtons = document.querySelectorAll('.plan-cta, .custom-cta');
-    const contactForm = document.getElementById('contactForm');
     const planSelect = document.getElementById('interested_in');
     const selectedPlanInput = document.getElementById('selectedPlan');
+    
+    if (!planButtons.length) return;
     
     planButtons.forEach(button => {
         button.addEventListener('click', (e) => {
@@ -688,65 +350,27 @@ function initializePlanSelection() {
                 e.preventDefault();
             }
             
-            // Get plan name from data attribute or text
-            let planName = button.getAttribute('data-plan') || 
-                          button.textContent.replace('Get Started', 'Starter')
-                                            .replace('Choose Growth', 'Growth')
-                                            .replace('Go Big', 'Scale')
-                                            .replace('Request Custom Quote', 'Custom')
-                                            .trim();
+            const planName = getPlanNameFromButton(button);
             
-            // Set plan in select and hidden input
+            // Update form fields
             if (planSelect) {
-                const optionValue = planName.toLowerCase();
-                planSelect.value = optionValue;
-                
-                // Update the label to show selected
-                const label = planSelect.parentElement.querySelector('label');
-                if (label) {
-                    label.style.color = 'var(--primary)';
-                    label.style.fontWeight = '600';
-                }
+                planSelect.value = planName.toLowerCase();
+                updateSelectLabel(planSelect);
             }
             
             if (selectedPlanInput) {
                 selectedPlanInput.value = planName;
             }
             
+            // Update message field
+            updateMessageFieldWithPlan(planName);
+            
             // Scroll to contact form
-            const contactSection = document.getElementById('contact');
-            if (contactSection) {
-                contactSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
-                
-                // Focus on name field after scroll
-                setTimeout(() => {
-                    const nameField = document.getElementById('name');
-                    if (nameField) {
-                        nameField.focus();
-                    }
-                    
-                    // Update message field with selected plan
-                    const messageField = document.getElementById('message');
-                    if (messageField) {
-                        const currentMessage = messageField.value.trim();
-                        if (!currentMessage.includes(planName)) {
-                            const planText = planName === 'Custom' ? 
-                                'Custom package (60+ shorts/month)' : 
-                                `${planName} plan`;
-                            messageField.value = currentMessage ? 
-                                `${currentMessage}\n\nInterested in: ${planText}` : 
-                                `Interested in: ${planText}`;
-                        }
-                    }
-                }, 500);
-            }
+            scrollToContactForm();
         });
     });
     
-    // Update plan when select changes
+    // Update when select changes
     if (planSelect && selectedPlanInput) {
         planSelect.addEventListener('change', function() {
             const selectedText = this.options[this.selectedIndex].text;
@@ -756,39 +380,257 @@ function initializePlanSelection() {
     }
 }
 
-// Remove any free samples references from form submission
-// Update the form submission success message
-if (contactForm) {
-    const originalSubmit = contactForm.onsubmit;
-    contactForm.onsubmit = function(e) {
-        // Remove any free samples logic
-        if (originalSubmit) originalSubmit.call(this, e);
+function getPlanNameFromButton(button) {
+    const planData = button.getAttribute('data-plan');
+    if (planData) return planData;
+    
+    const text = button.textContent.trim();
+    const planMap = {
+        'Get Started': 'Starter',
+        'Choose Growth': 'Growth',
+        'Go Big': 'Scale',
+        'Request Custom Quote': 'Custom'
+    };
+    
+    return planMap[text] || 'Starter';
+}
+
+function updateSelectLabel(select) {
+    const label = select.parentElement.querySelector('label');
+    if (label) {
+        label.style.color = 'var(--primary)';
+        label.style.fontWeight = '600';
+    }
+}
+
+function updateMessageFieldWithPlan(planName) {
+    const messageField = document.getElementById('message');
+    if (!messageField) return;
+    
+    const currentMessage = messageField.value.trim();
+    if (currentMessage.includes(planName)) return;
+    
+    const planText = planName === 'Custom' ? 
+        'Custom package (60+ shorts/month)' : 
+        `${planName} plan`;
+    
+    const newMessage = currentMessage ? 
+        `${currentMessage}\n\nInterested in: ${planText}` : 
+        `Interested in: ${planText}`;
+    
+    messageField.value = newMessage;
+}
+
+function scrollToContactForm() {
+    const contactSection = document.getElementById('contact');
+    if (!contactSection) return;
+    
+    contactSection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+    });
+    
+    // Focus on name field after scroll
+    setTimeout(() => {
+        const nameField = document.getElementById('name');
+        if (nameField) {
+            nameField.focus();
+        }
+    }, 500);
+}
+
+// Smooth Scrolling
+function initSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (!targetElement) return;
+            
+            e.preventDefault();
+            
+            // Add click animation
+            this.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+            
+            // Scroll to target
+            window.scrollTo({
+                top: targetElement.offsetTop - 80,
+                behavior: 'smooth'
+            });
+        });
+    });
+}
+
+// Scroll Animations
+function initScrollAnimations() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('animated');
+                }, entry.target.dataset.delay || 0);
+            }
+        });
+    }, observerOptions);
+    
+    // Observe elements with staggered delays
+    document.querySelectorAll('.section-title, .video-item, .pricing-card, .testimonial-card, .confidence-guarantee').forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        el.dataset.delay = index * CONFIG.ANIMATION_DELAY_INCREMENT;
+        observer.observe(el);
+    });
+}
+
+// Back to Top Button
+function initBackToTop() {
+    elements.backToTop = document.createElement('button');
+    elements.backToTop.innerHTML = '<i class="fas fa-chevron-up"></i>';
+    elements.backToTop.className = 'back-to-top';
+    
+    // Style is handled in CSS, but set basic inline styles
+    elements.backToTop.style.cssText = `
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+    `;
+    
+    document.body.appendChild(elements.backToTop);
+    
+    // Click event
+    elements.backToTop.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Scroll event
+    window.addEventListener('scroll', () => {
+        const shouldShow = window.scrollY > CONFIG.BACK_TO_TOP_THRESHOLD;
+        
+        elements.backToTop.style.opacity = shouldShow ? '1' : '0';
+        elements.backToTop.style.transform = shouldShow ? 'translateY(0)' : 'translateY(20px)';
+        elements.backToTop.style.pointerEvents = shouldShow ? 'auto' : 'none';
+    });
+}
+
+// Parallax Effect
+function initParallax() {
+    const heroBg = document.querySelector('.hero-bg');
+    if (!heroBg) return;
+    
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
+    });
+}
+
+// Guarantee Badge Animation
+function initGuaranteeBadge() {
+    const guaranteeBadge = document.querySelector('.guarantee-badge');
+    if (!guaranteeBadge) return;
+    
+    setInterval(() => {
+        guaranteeBadge.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            guaranteeBadge.style.transform = 'scale(1)';
+        }, 500);
+    }, 3000);
+}
+
+// Touch Device Detection
+function initTouchDeviceSupport() {
+    const isTouchDevice = ('ontouchstart' in window) || 
+                         (navigator.maxTouchPoints > 0) || 
+                         (navigator.msMaxTouchPoints > 0);
+    
+    if (isTouchDevice) {
+        document.body.classList.add('touch-device');
+        
+        // Remove hover effects on touch devices
+        document.querySelectorAll('.video-item, .social-icons a').forEach(el => {
+            el.classList.add('no-hover');
+        });
+    }
+}
+
+// Initialize Everything
+function initialize() {
+    console.log('ScaleScript Initializing...');
+    
+    // Initialize all modules
+    initMobileMenu();
+    initHeaderScroll();
+    initVideoModal();
+    initContactForm();
+    initSmoothScrolling();
+    initScrollAnimations();
+    initBackToTop();
+    initParallax();
+    initGuaranteeBadge();
+    initTouchDeviceSupport();
+    
+    // Initial animations
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+        
+        // Animate logo
+        const logo = document.querySelector('.logo');
+        if (logo) {
+            setTimeout(() => {
+                logo.style.transform = 'rotate(-5deg)';
+                setTimeout(() => {
+                    logo.style.transform = 'rotate(0)';
+                }, 300);
+            }, 500);
+        }
+        
+        // Animate hero elements
+        const heroElements = document.querySelectorAll('.hero .tagline, .hero h1, .hero p, .confidence-guarantee, .cta-button, .guarantee-badge');
+        heroElements.forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, 300 + (index * 200));
+        });
+    });
+    
+    console.log('ScaleScript Initialized Successfully');
+}
+
+// Start initialization
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+} else {
+    initialize();
+}
+
+// Export for debugging (optional)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        CONFIG,
+        elements,
+        state,
+        initialize
     };
 }
 
-// Update success message text in form submission handler
-// Find the success message update in the existing code and change:
-// From: "I'll create your 3 free viral samples..."
-// To: "We'll schedule a 15-minute strategy call..."
-
-// Initialize everything
-document.addEventListener('DOMContentLoaded', function() {
-    initializePlanSelection();
-    
-    // Update any text that might still reference free samples
-    const freeSamplesElements = document.querySelectorAll('*');
-    freeSamplesElements.forEach(el => {
-        if (el.textContent && el.textContent.toLowerCase().includes('free sample')) {
-            console.log('Found free samples reference:', el);
-            // You might want to manually review and update these
-        }
-    });
-    
-    // Update navigation
-    const navLinks = document.querySelectorAll('.nav-links a');
-    navLinks.forEach(link => {
-        if (link.textContent.includes('Get Samples')) {
-            link.textContent = 'Get Started';
-        }
-    });
-});
